@@ -1,8 +1,7 @@
 var canvasWidth = 960;
 var canvasHeight = 500;
 
-var homeButton, awayButton, checkbox;
-var innings = [0,1,3,6,3,4,6,0,1,2,4,2,3,4,0,0,1,1,3,2,1,6,4,6,4,2,4,1,3,2,0 ];
+var homeButton, awayButton, checkbox, teamSelect;
 
 var colors = {
     0: [255, 255, 255],
@@ -42,18 +41,11 @@ function draw () {
   line(320, 0, 320, canvasHeight);
   line(640, 0, 640, canvasHeight);
   
-  drawCricketField(160);
-  drawButtons(40);
-  drawBattingPositions(40);
-  drawCricketField(480);
-  drawButtons(360);
-  drawBattingPositions(360); 
-  drawInningsVisualisation(480);
-  drawCricketField(800);
-  drawButtons(680);
-  drawBattingPositions(680);
-  drawInningsVisualisation(800);
-
+  drawFirstPanel();
+  
+  drawSecondPanel();
+  
+  drawThirdPanel();
 }
 
 function keyTyped() {
@@ -63,6 +55,100 @@ function keyTyped() {
   else if (key == '@') {
     saveBlocksImages(true);
   }
+}
+
+function drawFirstPanel(){
+	drawCricketField(160, 10);
+
+	fill(0);
+	strokeWeight(0);
+	textStyle(BOLD);
+	textSize(20);
+	text("T20I Match Simulator", 60, 60);
+	
+	textStyle(NORMAL);
+	textSize(16);
+	
+	text("Match Number", 40, 270);
+	teamSelect = createInput();
+	teamSelect.addClass('match-number');
+	teamSelect.position(180, 261);
+	
+	homeButton = createButton('VIEW');
+	homeButton.addClass('button');
+	homeButton.position(180, 300); 
+	
+	text("Team A", 40, 350);
+	teamSelect = createSelect();
+	teamSelect.option('Select Team A');
+	teamSelect.option('Australia');
+	teamSelect.option('New Zealand');
+	teamSelect.position(180, 341);
+	
+	text("Team B", 40, 390);
+	teamSelect = createSelect();
+	teamSelect.option('Select Team B');
+	teamSelect.option('Australia');
+	teamSelect.option('New Zealand');
+	teamSelect.position(180, 381);
+	
+	text("Home Team", 40, 430);
+	teamSelect = createSelect();
+	teamSelect.option('Neutral Venue');
+	teamSelect.option('Team A');
+	teamSelect.option('Team B');
+	teamSelect.position(180, 421);
+	
+	homeButton = createButton('SIMULATE');
+	homeButton.addClass('button');
+	homeButton.position(180, 460); 
+}
+
+function drawSecondPanel(){
+	drawCricketField(480);
+	drawInningsVisualisation(480);
+	
+	fill(0);
+	strokeWeight(0);
+	
+	textStyle(BOLD);
+	textSize(20);
+	text("1st Innings", 335, 360);
+	
+	textStyle(NORMAL);
+	textSize(16);
+	
+	text("NZ won the toss and choose to bat", 335, 390);
+	
+	textStyle(BOLD);
+	
+	textSize(20);
+	text("New Zealand 209/6 (20.0 ov)", 335, 430);
+	
+	text("RR 10.45", 335, 470);
+}
+
+function drawThirdPanel(){
+	drawCricketField(800);
+	drawInningsVisualisation(800, 37);
+	
+	fill(0);
+	strokeWeight(0);
+	textStyle(BOLD);
+	textSize(20);
+	text("2nd Innings", 655, 360);
+	
+	textStyle(NORMAL);
+	textSize(16);
+	
+	text("Australia require 136 runs to win", 655, 390);
+	
+	textStyle(BOLD);
+	
+	textSize(20);
+	text("Australia 74/2 (6.1 ov)", 655, 430);
+	
+	text("RR 12.00, Required RR 9.83", 655, 470);
 }
 
 function drawButtons(xPos){
@@ -85,40 +171,35 @@ function drawBattingPositions(xPos){
   }
 }
 
-function drawCricketField(xPos){
+function drawCricketField(xPos, size = 20){
   stroke(55);
   strokeWeight(1);
   fill(234, 233, 141);
-  ellipse(xPos, 160, 300);
+  ellipse(xPos, 160, size * 15);
 
   strokeWeight(0);
   fill(155, 180, 23);
-  ellipse(xPos, 160, 280);
+  ellipse(xPos, 160, size * 14);
 
   rectMode(CENTER);
   stroke(255);
   strokeWeight(1);
   fill(101, 166, 16, 127);
-  rect(xPos, 160, 120, 160, 100);
-
-  fill(0);
-  textStyle(BOLD);
-  text("Team", xPos - 140, 340);
-  text("Batting Position", xPos - 140, 410);
+  rect(xPos, 160, size * 6, size * 8, 100);
 }
 
-function drawInningsVisualisation(xPos) {
+function drawInningsVisualisation(xPos, balls = 120) {
   rectMode(CORNER);
-  var inningsLength = innings.length;
-  for (var i = 0; i < inningsLength; i++) {
-      fill(colors[innings[i]][0], colors[innings[i]][1], colors[innings[i]][2]);
-      push();
-      translate(xPos, 160);
-      var degree = random(359);
-      rotate(degree);
-      strokeWeight(0);
-      rect(0, 0, meters[innings[i]], 1);
-      pop();  
+  for (var i = 0; i < balls; i++) {
+	var runs = floor(random(7));
+	fill(colors[runs][0], colors[runs][1], colors[runs][2]);
+	push();
+	translate(xPos, 160);
+	var degree = random(359);
+	rotate(degree);
+	strokeWeight(0);
+	rect(0, 0, meters[runs], 1);
+	pop();  
   }
   
   
