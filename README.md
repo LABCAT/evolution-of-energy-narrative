@@ -1,17 +1,9 @@
 ## PS4 MDDN 242 2017
 
-### Data Story
+### T20I Cricket Match Simulator
 
-Describe an interaction that could be built using data that tells a story.
-This does not have to be one you are able to implement.
-The subject matter can be based on the examples given in
-class, or anything of interest to you. The interaction
-graphic should be conveyed using three panels from
-left to right.
+The T20I match simulator would allow users to watch a simulation of every international T20 cricket match using historical data.  
 
-Be sure to use complete sentences, and you can reference your 
-image above. The explanation should be short but compete,
-no more than [100 words](https://wordcounter.net/).
+The first panel displays a form consisting of two field sets.  The first set allows the user enter a match number to view an existing match.  The second set allows the user view a simulation of a future match by picking two teams and setting the venue.
 
-Also update both images keeping their original sizes:
-preview.jpg (960x500) and thumbnail.png (230x120).
+The second panel shows the state of the simulation at the end of the first innings.  The third panel shows the state of the simulation part way through the second innings.  
