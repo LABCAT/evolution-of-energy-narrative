@@ -1,63 +1,73 @@
 function Agent1() {
   // any variables you add here are for your own internal state
-  this.is_alive = false;
+  this.is_tree = false;
+
+  this.is_fruit = false;
+
+  this.ripeness = 7;
+      
+  this.age = 205;
 
   // setup is run when the agent is reset
   // value is a number between 0 and 100
   this.setup = function(value) {
     if(value > 95) {
-      this.is_alive = true;
+      this.is_tree = true;
     }
     else {
-      this.is_alive = false;
+      this.is_tree = false;
     }
   }
 
   // this happens generally on mouse over
   this.activate = function() {
-    this.is_alive = true;
+    this.is_tree = true;
   }
 
   // decide on your next move based on neighbors (but don't do it yet)
   this.step = function(neighbors) {
     var num_neighbors_alive = 0;
     for(var i =0; i < neighbors.length; i++){
-      if(neighbors[i].agent.is_alive){
+      if(neighbors[i].agent.is_tree){
         num_neighbors_alive++;
       }
     }
 
-    if(num_neighbors_alive > 4 && !this.is_alive){
-      this.next_alive = true;
+    if(num_neighbors_alive > 2 && !this.is_tree && !this.is_fruit){
+      this.next_tree_state = true;
     }
-    else if(num_neighbors_alive == 3 && !this.is_alive){
-      this.next_alive = 2;
+    else if(num_neighbors_alive > 4 && this.is_tree && !this.is_fruit){
+      this.next_fruit_state = true;
+      this.next_tree_state = false;
+    }
+    else if (this.is_fruit && this.ripeness < 255){
+      this.ripeness += 8;
+    }
+    else if (this.is_fruit && this.ripeness > 254 && this.age){
+      this.age -= 5;
+    }
+    else if (this.is_fruit && !this.age){
+      this.next_fruit_state = false;
       this.ripeness = 7;
       this.age = 205;
     }
-    else if (this.is_alive == 2 && this.ripeness < 255){
-      this.ripeness += 8;
-    }
-    else if (this.is_alive == 2 && this.ripeness > 254 && this.age){
-      this.age -= 5;
-    }
-    else if (this.is_alive == 2 && !this.age){
-      this.next_alive = false;
-    }
     else {
-      this.next_alive = this.is_alive;
+      this.next_tree_state = this.is_tree;
+      this.next_fruit_state = this.is_fruit;
     }
   }
 
   // execute the next move you decided on
   this.update_state = function() {
-    this.is_alive = this.next_alive;
+    this.is_tree = this.next_tree_state;
+    this.is_fruit = this.next_fruit_state;
   }
 
   this.draw = function(size) {
     stroke(0);
-    if(this.is_alive) {
-      if(this.is_alive == 2){
+    noStroke();
+    if(this.is_tree || this.is_fruit) {
+      if(this.is_fruit){
         fill(128, this.age, 0, this.ripeness);
         drawFruit(size);
       }
@@ -68,7 +78,6 @@ function Agent1() {
       
     }
     else {
-      fill(0, 0, 30);
       drawSeed(size);
     }
     
@@ -76,8 +85,9 @@ function Agent1() {
 }
 
 function drawSeed(size){
+  fill(51, 200, 205);
   rect(0, 0, size, size);
-  fill(255,255,255);
+  fill(128,0,0);
   ellipse(0 + size/2, 0 + size/2, size/8, size/8);
 }
 
