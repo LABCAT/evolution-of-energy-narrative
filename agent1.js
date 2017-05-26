@@ -30,8 +30,19 @@ function Agent1() {
     if(num_neighbors_alive > 4 && !this.is_alive){
       this.next_alive = true;
     }
-    else if(num_neighbors_alive == 2 && !this.is_alive){
+    else if(num_neighbors_alive == 3 && !this.is_alive){
       this.next_alive = 2;
+      this.ripeness = 7;
+      this.age = 205;
+    }
+    else if (this.is_alive == 2 && this.ripeness < 255){
+      this.ripeness += 8;
+    }
+    else if (this.is_alive == 2 && this.ripeness > 254 && this.age){
+      this.age -= 5;
+    }
+    else if (this.is_alive == 2 && !this.age){
+      this.next_alive = false;
     }
     else {
       this.next_alive = this.is_alive;
@@ -47,29 +58,35 @@ function Agent1() {
     stroke(0);
     if(this.is_alive) {
       if(this.is_alive == 2){
-        fill(05, 205, 0);
+        fill(128, this.age, 0, this.ripeness);
         drawFruit(size);
       }
       else {
-        fill(205, 0, 0);
+        fill(5, 205, 30);
         drawTree(size);
       }
       
     }
     else {
       fill(0, 0, 30);
-      rect(0, 0, size, size);
+      drawSeed(size);
     }
     
   }
 }
 
-function drawFruit(size){
-  ellipse(0 + size/2, 0 + size/2, size, size);
+function drawSeed(size){
+  rect(0, 0, size, size);
+  fill(255,255,255);
+  ellipse(0 + size/2, 0 + size/2, size/8, size/8);
 }
 
 function drawTree(size){
   rect(0 + size/4, size - size/2, size/2, size/2);
   triangle(0, size-size/8, size/2, size/4, size, size-size/8);
   triangle(0+size/8, size-size/2, size/2, 0, size-size/8, size-size/2);
+}
+
+function drawFruit(size){
+  ellipse(0 + size/2, 0 + size/2, size, size);
 }

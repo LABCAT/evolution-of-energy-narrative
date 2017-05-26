@@ -13,6 +13,7 @@ var numActiveAgents = 0;
 var clearButton, randomButton, playButton, stepButton, stopButton;
 
 function setup() {
+  frameRate(5);
   // create the drawing canvas, save the canvas element
   var main_canvas = createCanvas(canvasWidth, canvasHeight);
   main_canvas.parent('canvasContainer');
