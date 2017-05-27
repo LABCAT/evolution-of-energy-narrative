@@ -1,5 +1,7 @@
 function Agent1() {
   // any variables you add here are for your own internal state
+  this.is_seed = 0;
+  
   this.is_tree = false;
 
   this.is_fruit = false;
@@ -33,7 +35,7 @@ function Agent1() {
       }
     }
 
-    if(num_neighbors_alive > 2 && !this.is_tree && !this.is_fruit){
+    if(num_neighbors_alive > 2 && !this.is_tree && !this.is_fruit && this.is_seed > 10){
       this.next_tree_state = true;
     }
     else if(num_neighbors_alive > 4 && this.is_tree && !this.is_fruit){
@@ -50,10 +52,12 @@ function Agent1() {
       this.next_fruit_state = false;
       this.ripeness = 7;
       this.age = 205;
+	  this.is_seed = 0;
     }
     else {
       this.next_tree_state = this.is_tree;
       this.next_fruit_state = this.is_fruit;
+	  this.is_seed += 1;
     }
   }
 
@@ -68,8 +72,7 @@ function Agent1() {
     noStroke();
     if(this.is_tree || this.is_fruit) {
       if(this.is_fruit){
-        fill(128, this.age, 0, this.ripeness);
-        drawFruit(size);
+        drawFeijoa(size, this.age, this.ripeness);
       }
       else {
         fill(5, 205, 30);
@@ -78,25 +81,92 @@ function Agent1() {
       
     }
     else {
-      drawSeed(size);
+      drawSeedling(size);
     }
     
   }
 }
 
-function drawSeed(size){
-  fill(51, 200, 205);
-  rect(0, 0, size, size);
-  fill(128,0,0);
-  ellipse(0 + size/2, 0 + size/2, size/8, size/8);
+function drawSeedling(size){
+	var raindrops = [];
+	for (var i = 0; i <= 32; i++) {
+		raindrops.push(new rainDrop(size));
+	}
+	for (var i = 32; i >= 0; i--) {
+		raindrops[i].move();
+		raindrops[i].display();
+		if (raindrops[i].y >= height) {
+		  raindrops[i].y = 0;
+		}
+	}
+	fill(255,204,26);
+	arc(size, 0, size/2, size/2, 0+HALF_PI, PI);
+	fill(51, 200, 25);
+	rect(0, size - size/16, size, size/16);
+	fill(128,0,0);
+	ellipse(0 + size/2, size -size/12, size/8, size/8);
 }
 
 function drawTree(size){
-  rect(0 + size/4, size - size/2, size/2, size/2);
+  rect(0 + size/4, size - size/4, size/2, size/4);
   triangle(0, size-size/8, size/2, size/4, size, size-size/8);
   triangle(0+size/8, size-size/2, size/2, 0, size-size/8, size-size/2);
 }
 
-function drawFruit(size){
-  ellipse(0 + size/2, 0 + size/2, size, size);
+function drawFeijoa(size, lifeLeft = 205, ripeness = 255){
+	stroke(25,68,14);
+	strokeWeight(size*0.0234375);
+	fill(128, lifeLeft, 0, ripeness);
+	
+	triangle(size*0.421875, size*0.046875, size*0.484375, size*0.125, size*0.46875, size*0.03125);
+	
+	triangle(size*0.531250, size*0.046875, size*0.500000, size*0.125, size*0.59375, size*0.06250);
+	
+	ellipse(size*0.5, size*0.5, size*0.625, size*0.8046875);
+	
+	noFill();
+	stroke(40,95,30);
+	
+	arc(size*0.5, size*0.484375, size*0.562500, size*0.7812500, PI+HALF_PI, TWO_PI+HALF_PI*0.85);
+	
+	stroke(25,68,14);
+	
+	arc(size*0.5, size*0.500000, size*0.546875, size*0.8046875, PI+HALF_PI, TWO_PI-QUARTER_PI*1.2);
+	
+	strokeWeight(0);
+	fill(18,62,11);
+	
+	ellipse(size*0.625000, size*0.625000, size*0.03125);
+	ellipse(size*0.687500, size*0.562500, size*0.03125);
+	ellipse(size*0.656250, size*0.500000, size*0.03125);
+	ellipse(size*0.593750, size*0.718750, size*0.03125);
+	ellipse(size*0.656250, size*0.687500, size*0.03125);
+	ellipse(size*0.625000, size*0.656250, size*0.03125);
+	ellipse(size*0.531250, size*0.750000, size*0.03125);
+	
+	fill(50,95,40);
+	
+	ellipse(size*0.625000, size*0.546875, size*0.03125);
+	ellipse(size*0.562500, size*0.531250, size*0.03125);
+	ellipse(size*0.546875, size*0.562500, size*0.03125);
+	ellipse(size*0.593750, size*0.437500, size*0.03125);
+	ellipse(size*0.656250, size*0.468750, size*0.03125);
+}
+
+function rainDrop(size) {
+  this.size = size;
+  this.x = random((size/32), (size - size/32));
+  this.y = random((size/32), (size - size/32));
+
+  this.move = function() {
+	if(this.y < this.size){
+		this.y += random(3);
+	}
+  };
+
+  this.display = function() {
+	strokeWeight(0);
+	fill(86, 170, 255, 255);
+    ellipse(this.x, this.y, size/32, size/32);
+  };
 }
