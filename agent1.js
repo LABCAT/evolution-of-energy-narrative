@@ -61,7 +61,7 @@ function Agent1() {
 		else if(this.life_stage === 'tree'){
 			this.next_life_stage = 'tree';
 			//if number of trees nearby is greater than 4
-			if(num_fruit_nearby > 4){
+			if(num_trees_nearby > 4){
 				//then the next life stage is fruit
 				this.next_life_stage = 'fruit';
 			}
