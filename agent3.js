@@ -1,7 +1,8 @@
-function Agent2() {
+function Agent3Preload() {  
+}
+
+function Agent3() {
   // any variables you add here are for your own internal state
-  this.power = 0.0;
-  this.next_power = 0.0;
 
   // setup is run when the agent is reset
   // value is a number between 0 and 100
@@ -17,47 +18,35 @@ function Agent2() {
   }
 
   // decide on your next move based on neighbors (but don't do it yet)
-  this.step = function(neighbors) {
+  this.step = function(neighbors, radius) {
     var surrounding_power = 0;
-    var death_limit1 = 49.9999;
-    var death_limit2 = 50.0001;
+    var death_limit1 = 49.99;
+    var death_limit2 = 50.01;
     for(var i=0; i<neighbors.length; i++) {
       surrounding_power = surrounding_power + neighbors[i].agent.power;
     }
     var avg_power = surrounding_power / neighbors.length;
     if(this.agent_type == 0) {
       if(avg_power < death_limit1) {
-        this.next_power = 0;
+        this.power = 0;
       }
       else {
-        this.next_power = 100;
+        this.power = 100;
       }
     }
     else {
       if(avg_power < death_limit2) {
-        this.next_power = 0;
+        this.power = 0;
       }
       else {
-        this.next_power = 100;
+        this.power = 100;
       }
     }
-    if(this.next_power > 100) {
-      this.next_power = 100;
-    }
   }
 
-  // execute the next move you decided on
-  this.update_state = function() {
-    this.power = this.next_power;
-  }
-
-  this.draw = function(size) {
-    var half_size = size/2;
-    var low = color(0, 0, 0);
-    var high = color(255, 255, 255);
-    var c = lerpColor(low, high, this.power / 100.0);
-    stroke(0);
-    fill(c);
-    ellipse(half_size, half_size, size, size);
+  this.draw = function(radius) {
+    var brighness = map(this.power, 0, 100, 0, 255);
+    fill(brighness);
+    ellipse(0, 0, radius*2, radius*2);
   }
 }

@@ -13,6 +13,19 @@ var numActiveAgents = 0;
 
 var clearButton, randomButton, playButton, stepButton, stopButton;
 
+var backgroundImage = null;
+var agentLookupWidth = 1;
+var agentLookupHeight = 1;
+var agentLookupTable = [0];
+var haveSeenMovement = false;
+
+function preload() {
+  backgroundImage = loadImage("z_background.jpg");
+
+  // this is called for static assets your agents need
+  Agent3Preload();
+}
+
 function setup() {
   // create the drawing canvas, save the canvas element
   var main_canvas = createCanvas(canvasWidth, canvasHeight);
@@ -23,7 +36,7 @@ function setup() {
   modeSelector.option('hexgrid');
   // modeSelector.option('vornoi');
   // modeSelector.option('freestyle');
-  modeSelector.changed(modeChangedEvent);
+  modeSelector.changed(gridTypeChanged);
   modeSelector.value('hexgrid');
   modeSelector.parent('selector1Container');
 
@@ -60,7 +73,7 @@ function setup() {
   // stopButton.mousePressed(stopButtonPressedEvent);
   // stopButton.parent('playButtonContainer');
 
-  clearButton = createButton('clear');
+  clearButton = createButton('reset');
   clearButton.mousePressed(clearButtonPressedEvent);
   clearButton.parent('clearButtonContainer');
 
@@ -71,6 +84,38 @@ function setup() {
   // guideCheckbox = createCheckbox('', false);
   // guideCheckbox.parent('checkContainer');
   // guideCheckbox.changed(guideChangedEvent);
+
+  // setup lookup table from pixels
+  backgroundImage.loadPixels();
+  var p = backgroundImage.pixels;
+  agentLookupHeight = backgroundImage.height;
+  agentLookupWidth = backgroundImage.width;
+  agentLookupTable = new Array(agentLookupHeight);
+  for(var j=0; j<agentLookupHeight; j++) {
+    agentLookupTable[j] = new Array(agentLookupWidth);
+    for(var i=0; i<agentLookupWidth; i++) {
+      var ix = 4 * (j * agentLookupWidth + i);
+      if(p[ix] > 128 && p[ix+1] > 128 && p[ix+2] > 128) {
+        // white
+        agentLookupTable[j][i] = 0;
+      }
+      else if(p[ix] < 128 && p[ix+1] < 128 && p[ix+2] < 128) {
+        // black
+        agentLookupTable[j][i] = 1;
+      }
+      else if(p[ix] > p[ix+1]  && p[ix] > p[ix+2] ) {
+        // red-ish
+        agentLookupTable[j][i] = 2;
+      }
+      else if(p[ix+1] > p[ix]  && p[ix+1] > p[ix+2] ) {
+        // green-ish
+        agentLookupTable[j][i] = 3;
+      }
+      else {
+        agentLookupTable[j][i] = 4;
+      }
+    }
+  }
 
   noLoop();
   refreshGridData();
@@ -100,8 +145,21 @@ function clamp(num, min, max) {
 }
 
 function getNewAgent() {
-  a = new Agent2();
+  a = new Agent3();
   return a;
+}
+
+function lookupAgentType(x, y, size) {
+  s2 = size/2;
+  x += s2;
+  y += s2;
+  if(x < 0 || y < 0 || x >= canvasWidth || y >= canvasHeight) {
+    print("ERROR");
+    return 0;
+  }
+  var ix = int(map(x, 0, canvasWidth, 0, agentLookupWidth));
+  var iy = int(map(y, 0, canvasHeight, 0, agentLookupHeight));
+  return agentLookupTable[iy][ix];
 }
 
 function refreshGridData() {
@@ -127,26 +185,26 @@ function refreshGridData() {
     }
     else if(glyphSize == 64) {
       numGridCols = 13;
-      numGridRows = 9;
+      numGridRows = 7;
       gridOffsetX = 35;
       gridSpacingX = 66;
-      gridOffsetY = -18;
+      gridOffsetY = 35;
       gridSpacingY = 59;
     }
     else if(glyphSize == 128) {
       numGridCols = 7;
-      numGridRows = 5;
+      numGridRows = 4;
       gridOffsetX = 10;
       gridSpacingX = 132;
-      gridOffsetY = -50;
+      gridOffsetY = 0;
       gridSpacingY = 118;
     }
     else if(glyphSize == 256) {
       numGridCols = 3;
-      numGridRows = 3;
+      numGridRows = 2;
       gridOffsetX = 96;
       gridSpacingX = 262;
-      gridOffsetY = -100;
+      gridOffsetY = 0;
       gridSpacingY = 234;
     }
   }
@@ -184,12 +242,16 @@ function refreshGridData() {
   }
   else if(glyphSize == 16) {
     numGridCols = 48;
-    numGridRows = 26;
-    gridOffsetX = 4;
+    numGridRows = 25;
+    gridOffsetX = 1;
     gridSpacingX = 20;
-    gridOffsetY = 4;
+    gridOffsetY = 1;
     gridSpacingY = 20;
   }
+
+  // this updates the grid to account for center spacing
+  gridOffsetX += glyphSize/2;
+  gridOffsetY += glyphSize/2;
 
   // determine active agents and reset
   numActiveAgents = 0;
@@ -219,19 +281,34 @@ function refreshGridData() {
       tweakedNumGridCols = numGridCols - 1;
     }
     for (var j=0; j<tweakedNumGridCols; j++) {
-      gridValues[i][j]._x = gridOffsetX + j * gridSpacingX + offsetX
-      gridValues[i][j]._y = gridOffsetY + i * gridSpacingY
-      if(gridValues[i][j]._x <= 450) {
-        gridValues[i][j]._type = 0;
+      gridValues[i][j]._x = gridOffsetX + j * gridSpacingX + offsetX;
+      gridValues[i][j]._y = gridOffsetY + i * gridSpacingY;
+      gridValues[i][j]._type = lookupAgentType(gridValues[i][j]._x, gridValues[i][j]._y, glyphSize);
+      if(gridValues[i][j]._type > 1) {
+        gridValues[i][j]._static = false;
+        gridValues[i][j]._size = glyphSize/4;
       }
       else {
-        gridValues[i][j]._type = 1;
+        gridValues[i][j]._static = true;
+        gridValues[i][j]._size = glyphSize/2;
       }
     }
   }
 
+  // setup
+  for (var i=0; i<numActiveAgents; i++) {
+    var agent = allAgents[i];
+    agent.setup(0, agent._type);
+  }
   // compute neighbors
-  for (var i=0; i<allAgents.length; i++) {
+  computeNeighbors(glyphSize);
+}
+
+function computeNeighbors(glyphSize) {
+  var mode = modeSelector.value();
+  var hexOffset = (mode == "hexgrid");
+
+  for (var i=0; i<numActiveAgents; i++) {
     allAgents[i]._neighbors = []
   }
 
@@ -241,7 +318,7 @@ function refreshGridData() {
   }
   for (var i=0; i<numActiveAgents; i++) {
     var agent = allAgents[i];
-    agent.setup(0, agent._type);
+    // agent.setup(0, agent._type);
     for (var j=i+1; j<numActiveAgents; j++) {
       var other = allAgents[j]
       var d = dist(agent._x, agent._y, other._x, other._y) / glyphSize
@@ -249,20 +326,24 @@ function refreshGridData() {
         var o1 = {
           'distance': d,
           'agent': other,
+          'radius': other._size,
           'x': other._x - agent._x,
-          'y': other._y - agent._y
+          'y': other._y - agent._y,
+          'pos': createVector(other._x - agent._x, other._y - agent._y)
         }
         agent._neighbors.push(o1)
         var o2 = {
           'distance': d,
           'agent': agent,
+          'radius': agent._size,
           'x': agent._x - other._x,
-          'y': agent._y - other._y
+          'y': agent._y - other._y,
+          'pos': createVector(agent._x - other._x, agent._y - other._y)
         }
         other._neighbors.push(o2)
       }
     }
-  }
+  }  
 }
 
 function speedChangedEvent() {
@@ -310,26 +391,35 @@ function modeChangedEvent() {
     // sizeSelector.removeAttribute('disabled');
 
     // refresh data
-    refreshGridData();
+    // refreshGridData();
   }
   if (mode === "hexgrid") {
     // refresh data
-    refreshGridData();
+    // refreshGridData();
   }
 
   redraw();
 }
 
+function gridTypeChanged() {
+  modeChangedEvent();
+  refreshGridData();
+  redraw();
+}
+
 function clearButtonPressedEvent() {
-  for(var i=0; i<allAgents.length; i++) {
-    allAgents[i].setup(0);
+  refreshGridData();
+  for(var i=0; i<numActiveAgents; i++) {
+    var agent = allAgents[i];
+    agent.setup(0, agent._type);
   }
   redraw();
 }
 
 function randomButtonPressedEvent() {
+  // refreshGridData();
   for(var i=0; i<numActiveAgents; i++) {
-    agent = allAgents[i];
+    var agent = allAgents[i];
     agent.setup(random(100), agent._type);
   }
   redraw();
@@ -345,19 +435,19 @@ function playButtonPressedEvent() {
     loop();
   }
   modeChangedEvent()
-  refreshGridData();
+  // refreshGridData();
   redraw();
 }
 
 function stepButtonPressedEvent() {
   is_playing = true;
-  refreshGridData();
+  // refreshGridData();
   redraw();
   is_playing = false;
 }
 
 function stopButtonPressedEvent() {
-  refreshGridData();
+  // refreshGridData();
   redraw();
 }
 
@@ -380,7 +470,7 @@ function drawGrid() {
     resetMatrix();
     agent = allAgents[i];
     translate(agent._x, agent._y);
-    agent.draw(glyphSize);
+    agent.draw(agent._size);
     resetMatrix();
     if (show_oddball) {
       translate(agent._x, agent._y);
@@ -389,15 +479,59 @@ function drawGrid() {
   }
 }
 
+function clamp(num, min, max) {
+  return num <= min ? min : num >= max ? max : num;
+}
+
 function stepGrid() {
   var glyphSize = parseInt(sizeSelector.value(), 10);
+  var radius = glyphSize / 2;
+  var min_x = int(0);
+  var min_y = int(0);
+  var max_x = int(canvasWidth - radius) - 1;
+  var max_y = int(canvasHeight - radius) - 1;
+
+  var updatedAgents = new Array(numActiveAgents);
   for (var i=0; i<numActiveAgents; i++) {
+    // make a shallow copy of the agent
     agent = allAgents[i];
-    agent.step(agent._neighbors);
+    var clone = Object.assign({}, agent);
+    agent._new_me = clone;
+    var movement = clone.step(clone._neighbors, clone._size);
+    if(typeof movement !== 'undefined') {
+      haveSeenMovement = true;
+      var new_x = clone._x + movement.x;
+      var new_y = clone._y + movement.y;
+      clone._x = clamp(new_x, min_x, max_x);
+      clone._y = clamp(new_y, min_y, max_y);
+    }
+    updatedAgents[i] = clone;
   }
+
   for (var i=0; i<numActiveAgents; i++) {
-    agent = allAgents[i];
-    agent.update_state();
+    allAgents[i] = updatedAgents[i];
+  }
+
+  if(haveSeenMovement) {
+    // copy new version of neighbors
+    computeNeighbors(glyphSize);
+  }
+  else {
+    for (var i=0; i<numActiveAgents; i++) {
+      agent = allAgents[i];
+      var old_neighbors = agent._neighbors;
+      for(var j=0; j<old_neighbors.length; j++) {
+        if ('_new_me' in old_neighbors[j].agent) {
+          agent._neighbors[j].agent = agent._neighbors[j].agent._new_me;
+        }
+      }
+    }
+    // weakly check optimization assertion (not a memory leak)
+    for (var i=0; i<numActiveAgents; i++) {
+      if ('_new_me' in allAgents[i]) {
+        print("you flubbed the _new_me setup");
+      }
+    }
   }
 }
 
@@ -472,7 +606,7 @@ function keyTyped() {
   }
   else if (key == 'g') {
     modeSelector.value('grid');
-    modeChangedEvent()
+    gridTypeChanged()
   }
   else if (key == 'r') {
     modeSelector.value('random');
@@ -480,7 +614,7 @@ function keyTyped() {
   }
   else if (key == 'h') {
     modeSelector.value('hexgrid');
-    modeChangedEvent()
+    gridTypeChanged()
   }
 }
 
