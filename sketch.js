@@ -5,6 +5,7 @@ var is_playing = false;
 var show_oddball = false;
 var modeSelector;
 var sizeSelector;
+var speedSelector;
 
 var max_vals = [360, 100, 100];
 var allAgents = [];
@@ -20,21 +21,33 @@ function setup() {
 
   modeSelector = createSelect();
   modeSelector.option('grid');
-  // modeSelector.option('hexgrid');
+  modeSelector.option('hexgrid');
   // modeSelector.option('vornoi');
   // modeSelector.option('freestyle');
   modeSelector.changed(modeChangedEvent);
-  modeSelector.value('grid');
+  modeSelector.value('hexgrid');
   modeSelector.parent('selector1Container');
 
   sizeSelector = createSelect();
+  sizeSelector.option('16');
   sizeSelector.option('32');
   sizeSelector.option('64');
   sizeSelector.option('128');
   sizeSelector.option('256');
-  sizeSelector.parent('selector3Container');
+  sizeSelector.parent('selector2Container');
   sizeSelector.value('32');
   sizeSelector.changed(sizeChangedEvent);
+
+  speedSelector = createSelect();
+  speedSelector.option('1');
+  speedSelector.option('2');
+  speedSelector.option('5');
+  speedSelector.option('10');
+  speedSelector.option('24');
+  speedSelector.option('60');
+  speedSelector.parent('selector3Container');
+  speedSelector.value('10');
+  speedSelector.changed(speedChangedEvent);
 
   stepButton = createButton('step');
   stepButton.mousePressed(stepButtonPressedEvent);
@@ -63,6 +76,8 @@ function setup() {
   noLoop();
   refreshGridData();
   modeChangedEvent();
+  speedChangedEvent();
+  playButtonPressedEvent();
 }
 
 /*
@@ -86,8 +101,7 @@ function clamp(num, min, max) {
 }
 
 function getNewAgent() {
-  a = new Agent1();
-  a.setup(0);
+  a = new Agent2();
   return a;
 }
 
@@ -96,6 +110,14 @@ function refreshGridData() {
   var glyphSize = parseInt(sizeSelector.value(), 10);
 
   if (mode == "hexgrid") {
+    if(glyphSize == 16) {
+      numGridCols = 58;
+      numGridRows = 33;
+      gridOffsetX = 20;
+      gridSpacingX = 16;
+      gridOffsetY = 1;
+      gridSpacingY = 15;
+    }
     if(glyphSize == 32) {
       numGridCols = 30;
       numGridRows = 17;
@@ -161,11 +183,26 @@ function refreshGridData() {
     gridOffsetY = 4;
     gridSpacingY = 38;
   }
+  else if(glyphSize == 16) {
+    numGridCols = 48;
+    numGridRows = 26;
+    gridOffsetX = 4;
+    gridSpacingX = 20;
+    gridOffsetY = 4;
+    gridSpacingY = 20;
+  }
+
+  // determine active agents and reset
   numActiveAgents = 0;
+  var hexOffset = (mode == "hexgrid");
   gridValues = new Array(numGridRows);
   for (var i=0; i<numGridRows; i++) {
-    gridValues[i] = new Array(numGridCols);
-    for (var j=0; j<numGridCols; j++) {
+    var tweakedNumGridCols = numGridCols;
+    if (hexOffset && i%2 == 1) {
+      tweakedNumGridCols = numGridCols - 1;
+    }
+    gridValues[i] = new Array(tweakedNumGridCols);
+    for (var j=0; j<tweakedNumGridCols; j++) {
       if(numActiveAgents >= allAgents.length) {
         allAgents.push(getNewAgent());
       }
@@ -175,7 +212,6 @@ function refreshGridData() {
   }
 
   // assign positions
-  var hexOffset = (mode == "hexgrid");
   for (var i=0; i<numGridRows; i++) {
     var tweakedNumGridCols = numGridCols;
     var offsetX = 0;
@@ -186,6 +222,12 @@ function refreshGridData() {
     for (var j=0; j<tweakedNumGridCols; j++) {
       gridValues[i][j]._x = gridOffsetX + j * gridSpacingX + offsetX
       gridValues[i][j]._y = gridOffsetY + i * gridSpacingY
+      if(gridValues[i][j]._x <= 450) {
+        gridValues[i][j]._type = 0;
+      }
+      else {
+        gridValues[i][j]._type = 1;
+      }
     }
   }
 
@@ -194,12 +236,17 @@ function refreshGridData() {
     allAgents[i]._neighbors = []
   }
 
+  var dist_thresh = 2.0;
+  if(hexOffset) {
+    dist_thresh = 1.4;
+  }
   for (var i=0; i<numActiveAgents; i++) {
     var agent = allAgents[i];
+    agent.setup(0, agent._type);
     for (var j=i+1; j<numActiveAgents; j++) {
       var other = allAgents[j]
       var d = dist(agent._x, agent._y, other._x, other._y) / glyphSize
-      if (d < 2.0) {
+      if (d < dist_thresh) {
         var o1 = {
           'distance': d,
           'agent': other,
@@ -217,6 +264,11 @@ function refreshGridData() {
       }
     }
   }
+}
+
+function speedChangedEvent() {
+  var speed = parseInt(speedSelector.value(), 10);
+  frameRate(speed)
 }
 
 function sizeChangedEvent() {
@@ -277,8 +329,9 @@ function clearButtonPressedEvent() {
 }
 
 function randomButtonPressedEvent() {
-  for(var i=0; i<allAgents.length; i++) {
-    allAgents[i].setup(random(100));
+  for(var i=0; i<numActiveAgents; i++) {
+    agent = allAgents[i];
+    agent.setup(random(100), agent._type);
   }
   redraw();
 }
@@ -310,7 +363,6 @@ function stopButtonPressedEvent() {
 }
 
 var colorBack = "rgb(232, 232, 232)"
-var colorFront = "rgb(192, 192, 255)"
 
 function highlightGlyph(glyphSize) {
   halfSize = glyphSize / 2.0;
@@ -388,8 +440,7 @@ function keyTyped() {
     saveBlocksImages(true);
   }
   else if (key == ' ') {
-    refreshGridData();
-    redraw();
+    playButtonPressedEvent();
   }
   else if (key == 's') {
     var old_value = guideCheckbox.checked();
@@ -397,18 +448,22 @@ function keyTyped() {
     guideChangedEvent();
   }
   else if (key == '1') {
-    sizeSelector.value('32');
+    sizeSelector.value('16');
     sizeChangedEvent()
   }
   else if (key == '2') {
-    sizeSelector.value('64');
+    sizeSelector.value('32');
     sizeChangedEvent()
   }
   else if (key == '3') {
-    sizeSelector.value('128');
+    sizeSelector.value('64');
     sizeChangedEvent()
   }
   else if (key == '4') {
+    sizeSelector.value('128');
+    sizeChangedEvent()
+  }
+  else if (key == '5') {
     sizeSelector.value('256');
     sizeChangedEvent()
   }
