@@ -15,6 +15,8 @@ function Agent3() {
     //3 = wood
     //4 = water
     this.agent_type = agent_type;
+    this.number_steps = int(random(0,10));
+    this.current_direction = p5.Vector.random2D();
   }
 
   // this happens generally on mouse over
@@ -25,9 +27,13 @@ function Agent3() {
   // decide on your next move based on neighbors (but don't do it yet)
   this.step = function(neighbors, radius) {
     this.close = false;
-    this.close = false;
     if(this.agent_type >= 1) {
-      v = p5.Vector.random2D().mult(radius/10);
+      this.number_steps = this.number_steps - 1;
+      if(this.number_steps < 0) {
+        this.number_steps = 30;
+        this.current_direction = p5.Vector.random2D();
+      }
+      v = this.current_direction.copy().mult(radius/10);
       for(var i=0; i<neighbors.length; i++) {
         var npos = neighbors[i].pos;
         var d = npos.mag();
