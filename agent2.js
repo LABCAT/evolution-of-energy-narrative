@@ -2,21 +2,22 @@ function Agent2() {
     //the life stage of the agent
     this.life_stage = 'seedling';
     //maturity of the seedling and fruit - ranges from 0-205
-    this.maturity = 0;
+    this.maturity = 0.0;
+    this.next_maturity = 0.0;
     //ripeness of the fruit - ranges from 7-255
     this.ripeness = 7;
     this.next_ripeness = 7;
+    //the amount of rainfall in a cell - ranges from 0-205
     this.rainfall = 0.0;
     this.next_rainfall = 0.0;
-    this.maturity = 0.0;
-    this.next_maturity = 0.0;
+    
 
     // setup is run when the agent is reset
     // value is a number between 0 and 100
     this.setup = function(value, agent_type) {
         this.rainfall = value;
-        this.agent_type = agent_type;
         this.next_rainfall = this.rainfall;
+        this.agent_type = agent_type;
     }
 
     // this happens generally on mouse over
@@ -29,13 +30,16 @@ function Agent2() {
         var todays_rainfall = 0;
         var num_trees_nearby = 0;
         for(var i=0; i<neighbors.length; i++) {
+            //if it has been raining in a neighboring agent then it will start raining in this agent
             if(neighbors[i].agent.rainfall > todays_rainfall) {
-              todays_rainfall = neighbors[i].agent.rainfall;
+                todays_rainfall = neighbors[i].agent.rainfall;
             }
+            //if the neighbor is a tree add it to the number of trees nearby
             if(neighbors[i].agent.life_stage === 'tree'){
                 if(this.agent_type == 0) {
                     num_trees_nearby++;
                 }
+                //in this climate only keep track on the nubmber of trees nearby on the x axis
                 else if(this.agent_type && neighbors[i].y == 0){
                     num_trees_nearby++;
                 }
@@ -58,17 +62,21 @@ function Agent2() {
             var will_it_rain = floor(random(1, 100));
             //then there is 1% chance of a storm
             if(will_it_rain < 2){
-                this.next_rainfall = 100.0;
+               this.activate();
             }
         }
+
+        //if current life stage is a seedling
         if(this.life_stage === 'seedling'){
             this.next_life_stage = 'seedling';
+            //if the seedling has received enough rain to mature, it becomes a tree
             if(this.maturity > 200){
                 this.next_life_stage = 'tree';
                 this.next_maturity = 205;
             }
+            //otherwise it continues to mature
             else {
-                this.next_maturity = this.maturity + this.next_rainfall/15;
+                this.next_maturity = this.maturity + this.next_rainfall/5;
             }
         }
         //if current life stage is a tree
@@ -109,8 +117,8 @@ function Agent2() {
     }
 
     this.draw = function(size) {
-        var half_size = size/2;
         var low, high = color(100, 100, 100);
+        //determine the background colour of the agent based on whether or not it is fruit or its agent type
         if(this.life_stage === 'fruit'){
             low = color(232,232,232);
         }
@@ -124,13 +132,17 @@ function Agent2() {
         }
         var c = lerpColor(low, high, this.rainfall / 100.0);
         strokeWeight(0);
+
+        //the rain effect only applies to seedlings 
         if(this.life_stage === 'seedling'){
             fill(c);
         }
         else {
             fill(low);
         }
-        ellipse(half_size, half_size, size, size);
+
+        ellipse(size/2, size/2, size, size);
+
 
         if(this.life_stage === 'seedling'){
             drawSeedlingState(size, this.rainfall);
@@ -153,13 +165,13 @@ function drawSeedlingState(size, rainfall){
     var rainfall = floor(rainfall/4);
     var raindrops = [];
     if(rainfall > 1){
-    for (var i = 0; i <= rainfall; i++) {
-      raindrops.push(new rainDrop(size));
-    }
-    //the animate the rain drops to simulate rain
-    for (var i = rainfall; i >= 0; i--) {
-      raindrops[i].draw();
-    }
+        for (var i = 0; i <= rainfall; i++) {
+          raindrops.push(new rainDrop(size));
+        }
+        //the animate the rain drops to simulate rain
+        for (var i = rainfall; i >= 0; i--) {
+          raindrops[i].draw();
+        }
     }
     //finally, draw the seedling at the bottom of the square
     fill(128,0,0);

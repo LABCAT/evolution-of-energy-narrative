@@ -1,9 +1,9 @@
 ## PS4 MDDN 242 2017
 
-### Feijoa Farm
+### Feijoa Farm - Direction and Cell Types
 
-There is a theory that feijoa trees will produce more fruit if there are other feijoa trees nearby.  Therefore the objective of this sketch is to simulate the seasonal nature of a feijoa plantation.
+For this result I have continued to experiment with my idea for a farm simulation.  
 
-In this simulation an agent can have three states; seedling, tree or fruit.  An agent also is also affected by two other variables (maturity and ripeness) that affect when the agent can change state.
+I have introduced rain which is created both by hovering over a cell and randomly if a cell has received very little rain. The rain spreads to other cells and the amount of rain a cell receives over time will determine when it becomes a tree. 
 
-I think that the simulation works very well as it constantly evolves over time.  Sometimes the random mode doesn't generate  enough trees close to each other. However I think this adds to the simulation as manual intervention is then required to get the fruit to grow.
+I have also introduced different climates based on the agent type. In one climate it rains more often and feijoas grow very easily.  In the other climate it rains less frequently and feijoas don't grow as well. 
