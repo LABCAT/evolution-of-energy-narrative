@@ -59,7 +59,7 @@ function setup() {
   speedSelector.option('24');
   speedSelector.option('60');
   speedSelector.parent('selector3Container');
-  speedSelector.value('2');
+  speedSelector.value('24');
   speedSelector.changed(speedChangedEvent);
 
   stepButton = createButton('step');
@@ -291,7 +291,7 @@ function refreshGridData() {
       }
       else {
         gridValues[i][j]._static = true;
-        gridValues[i][j]._size = glyphSize/2;
+        gridValues[i][j]._size = glyphSize/4;
       }
     }
   }
@@ -534,6 +534,23 @@ function stepGrid() {
       }
     }
   }
+  
+	//at the end of the step, calculate the current phase and determine whether or not it is time to change
+	if(days_remaining > 0){
+		days_remaining--;
+	}
+	else {
+		if(phase_pointer < 7){
+			phase_pointer++;
+			current_phase = phases_of_nature[phase_pointer][0];
+			days_remaining = phases_of_nature[phase_pointer][1];
+		}
+		else {
+			phase_pointer = 0;
+			current_phase = phases_of_nature[phase_pointer][0];
+			days_remaining = phases_of_nature[phase_pointer][1];
+		}
+	}
 }
 
 function activateGrid(x, y) {
