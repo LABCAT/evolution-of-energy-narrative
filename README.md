@@ -1,21 +1,9 @@
 ## PS4 MDDN 242 2017
 
-### 5 Elements Simulation
+### Five Elements Simulation 
 
-I have an idea for the simulation I want to product based on the new functionality that we now have available.
+This simulation is based on the five element theory of Chinese philosophy or Wu Xing. The basis of this theory is that there are five elements which can be used to describe interactions between phenomena.
 
-There will be 5 elements: earth, water, wood, fire and metal
+Wu Xing originally referred to the five major planets and based my simulation around this idea. The elements begin scattered throughout the solar system and are compelled to travel around the sun.  
 
-Here is a basic idea of the rules that I am thinking to implement:
-
-If wood is touched by fire then it turns to earth
-
-If earth is touched by fire it turns to metal
-
-If fire is touched by water then it turns to earth
-
-If earth is touched by water it turns to wood
-
-Metal can not move and can not change
-
-At the moment I think I may need to refine these rules as I can see eventually the simulation would be left with only metal and water elements.
+In five element theory there are two types of interactions, generating and overcoming.  I have used these interactions to develop the rules of the simulation which determine when an element will changesize or transform into a different element. 
