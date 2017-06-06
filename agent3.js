@@ -15,7 +15,7 @@ var phases_of_nature  = [
 var phase_pointer = 0;
 
 //current phase
-var current_phase = 'earth';
+var current_phase = 'metal';
 
 //days remaining in this phase 
 var days_remaining = 18;
@@ -72,6 +72,14 @@ function Agent3() {
 
   // decide on your next move based on neighbors (but don't do it yet)
   this.step = function(neighbors, radius) {
+  	var become_current_phase = random(0, 100);
+  	//there is a 0.1% chance that an agent will be reborn as the element of the current phase
+  	//this ensure that none of the 5 different agent types will evey become extinct
+  	if(become_current_phase < 0.1){
+  		console.log(become_current_phase);
+  		this.agent_type = current_phase;
+  		this.size_multiplier = 1.00;
+  	}
 
 	for(var i=0; i<neighbors.length; i++) {
 		var npos = neighbors[i].pos;
@@ -117,19 +125,20 @@ function Agent3() {
     stroke(0);
     var size = radius * this.size_multiplier;
     if(this.agent_type == 'earth') {
-      fill(255);
+      	fill(255);
     }
     else if(this.agent_type == 'metal') {
-      fill(0);
+    	
+      	fill(0, 0, 0);
     }
     else if(this.agent_type == 'fire') {
-      fill(255, 0, 0);
+      	fill(255, 0, 0);
     }
     else if(this.agent_type == 'wood') {
-      fill(0, 255, 0);
+      	fill(0, 255, 0);
     }
     else if(this.agent_type == 'water') {
-      fill(0, 0, 255);
+      	fill(0, 0, 255);
     }
     ellipse(0, 0, size, size);
   }
