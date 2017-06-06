@@ -299,7 +299,7 @@ function refreshGridData() {
   // setup
   for (var i=0; i<numActiveAgents; i++) {
     var agent = allAgents[i];
-    agent.setup(0, agent._type);
+    agent.setup(0, agent._type, agent._size);
   }
   // compute neighbors
   computeNeighbors(glyphSize);
@@ -412,7 +412,7 @@ function clearButtonPressedEvent() {
   refreshGridData();
   for(var i=0; i<numActiveAgents; i++) {
     var agent = allAgents[i];
-    agent.setup(0, agent._type);
+    agent.setup(0, agent._type, agent._size);
   }
   redraw();
 }
@@ -421,7 +421,7 @@ function randomButtonPressedEvent() {
   // refreshGridData();
   for(var i=0; i<numActiveAgents; i++) {
     var agent = allAgents[i];
-    agent.setup(random(100), agent._type);
+    agent.setup(random(100), agent._type, agent._size);
   }
   redraw();
 }
