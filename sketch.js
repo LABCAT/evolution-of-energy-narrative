@@ -59,7 +59,7 @@ function setup() {
   speedSelector.option('24');
   speedSelector.option('60');
   speedSelector.parent('selector3Container');
-  speedSelector.value('24');
+  speedSelector.value('60');
   speedSelector.changed(speedChangedEvent);
 
   stepButton = createButton('step');
