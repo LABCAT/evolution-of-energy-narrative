@@ -452,7 +452,7 @@ function stopButtonPressedEvent() {
   redraw();
 }
 
-var colorBack = "rgb(232, 232, 232)"
+var colorBack = "rgb(0, 0, 0)"
 
 function highlightGlyph(glyphSize) {
   halfSize = glyphSize / 2.0;
