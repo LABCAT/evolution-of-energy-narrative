@@ -127,11 +127,15 @@ function Agent3() {
 	//calculate the direction to travel every 10 steps
 	this.number_steps = this.number_steps - 1;
 	if(this.number_steps < 0) {
-		this.number_steps = 20;
+		this.number_steps = 30;
 		this.current_direction = calculateDirection(this._x, this._y, radius);
 	}
-	v = this.current_direction.copy().mult(radius/2);
-
+	v = this.current_direction.copy();
+	//add a little bit of randomness to the movement
+	v.add(p5.Vector.random2D().mult(radius/2));
+	//gravity draws the element back to the center if it gets to close to the edges
+	var gravity = this.createGravity();
+	v.sub(gravity[0], gravity[1]);
 	for(var i=0; i<neighbors.length; i++) {
 		var npos = neighbors[i].pos;
 		var d = npos.mag();
@@ -173,19 +177,19 @@ function Agent3() {
 	return v;
   }
 
-  this.draw = function(radius) {
-    var size = radius * 4;
+	this.draw = function(radius) {
+		var size = radius * 4;
 
-    if(this.agent_type == 'sun'){
-		strokeWeight(0);
-    	fill(sun_colours[current_phase]);
-    	hexagon(0, 0, size/4);
-    }
-    else {
-		this.drawElement(size);
-    }   
-	
-  }
+		if(this.agent_type == 'sun'){
+			strokeWeight(0);
+			fill(sun_colours[current_phase]);
+			hexagon(0, 0, size/4);
+		}
+		else {
+			this.drawElement(size);
+		}   
+
+	}
   
 	/*
 	 * function used to draw the three circlies that represent the element
@@ -204,6 +208,35 @@ function Agent3() {
 		strokeWeight(0);
 		fill(element_colours[this.agent_type][0]);
 		ellipse(0, 0, size*0.25, size*0.25);
+	}
+	
+	/*
+	 * This function determines if an element is to close to edges of the solar system 
+	 * @return {Array}    - an array of values with will substrated from the vector of the element
+	 */
+	this.createGravity = function(){
+		var glyphSize = parseInt(sizeSelector.value(), 10);
+		var rand = floor(random(1, glyphSize));
+		var radius = glyphSize / 2;
+		var min_x = radius + 1;
+		var min_y = radius + 1;
+		var max_x = int(canvasWidth - radius) - 1;
+		var max_y = int(canvasHeight - radius) -1;
+		if(this._y >= max_y){
+			return [-rand, rand];
+		}
+		else if(this._y <= min_y){
+			return [rand, -rand];
+		}
+		else if(this._x >= max_x){
+			return [rand, rand];
+		}
+		else if(this._x <= min_x){
+			return [-rand, -rand];
+		}
+		else {
+			return [0, 0];
+		}
 	}
 }
 

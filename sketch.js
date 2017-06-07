@@ -322,7 +322,7 @@ function computeNeighbors(glyphSize) {
     // agent.setup(0, agent._type);
     for (var j=i+1; j<numActiveAgents; j++) {
       var other = allAgents[j]
-      var d = dist(agent._x, agent._y, other._x, other._y) / glyphSize
+      var d = dist(agent._x, agent._y, other._x, other._y) / glyphSize;
       if (d < dist_thresh) {
         var o1 = {
           'distance': d,
@@ -487,8 +487,8 @@ function clamp(num, min, max) {
 function stepGrid() {
   var glyphSize = parseInt(sizeSelector.value(), 10);
   var radius = glyphSize / 2;
-  var min_x = int(0);
-  var min_y = int(0);
+  var min_x = radius + 1;
+  var min_y = radius + 1;
   var max_x = int(canvasWidth - radius) - 1;
   var max_y = int(canvasHeight - radius) - 1;
 
