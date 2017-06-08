@@ -44,7 +44,7 @@ var elements = [
 //a JSON object containing arrays of three colours for each of the elements
 var element_colours = {
 				'earth' : ['#a1887f', '#3e2723', '#6d4c41'],
-				'metal' : ['#e0e0e0', '#212121', '#757575'],
+				'metal' : ['#e0e0e0', '#424242', '#757575'],
 				'fire'  : ['#e57373', '#b71c1c', '#e53935'],
 				'wood'  : ['#81c784', '#1b5e20', '#43a047'],
 				'water' : ['#64b5f6', '#0d47a1', '#1e88e5']
@@ -108,18 +108,21 @@ function Agent3() {
 
   }
 
-  // decide on your next move based on neighbors (but don't do it yet)
+  // decide on your next move based on neighbors 
   this.step = function(neighbors, radius) {
 	//the sun is always static and not affected by its neighbours
   	if(this.agent_type == 'sun'){
   		return;
   	}
 
+	//there is a random chance that an agent will be reborn as the element of the current phase
   	var become_current_phase = random(0, 100);
-  	//there is a 0.75% that an agent will be reborn as the element of the current phase
+	//a small percentage - needs to be higher during the earth phase as it is shorter 
+	var random_chance = 1.5 - (phases_of_nature[phase_pointer][1] /100);
   	//this is used to demonstrate that this element is the dominating energy during this phase
 	//it also ensures that none of the 5 different agent types will ever become extinct
-  	if(become_current_phase <= 0.75){
+  	if(become_current_phase <= random_chance){
+		print(current_phase);
   		this.agent_type = current_phase;
   	}
 

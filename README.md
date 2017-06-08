@@ -18,11 +18,11 @@ The other variable that has a great effect on the narrative is the percentage va
  
 The simulation is affected by five phases used to represent the current state of nature. Each step of the simulation represents one day and each of the phases has the following lengths:
  
- * Wood/Spring - 72 days
- * Fire/Summer - 72 days
- * Metal/Autumn - 72 days
- * Water/Winter - 72 days
- * Earth - 4 periods of 18 days, the earth phase occurs in between each of the other phases
+ * Wood/Spring  (Green)  - 72 days
+ * Fire/Summer  (Red)    - 72 days
+ * Metal/Autumn (Silver) - 72 days
+ * Water/Winter (Blue)   - 72 days
+ * Earth        (Brown)  - 4 periods of 18 days, the earth phase occurs in between each of the other phases
  
 The five elements are all dynamic agents, constantly compelled to travel around the sun.  The Wu Xing consists of two interaction cycles, a generating cycle and a overcoming cycle.  The rules of the simulation have been derived from these interaction cycles:
  
@@ -40,10 +40,16 @@ If an element collides with a neighbour that it is **overcome by** then it will 
  * metal is overcome by fire
  * water is overcome by earth
  * wood is overcome by metal
-* fire is overcome by water
+ * fire is overcome by water
  
 If an element is the same as the phase of the current state of nature it will decrease in size. Otherwise it transforms into the element it is **overcome by**.
  
 There is one other rule that is very important for demonstrating which element type is the dominating energy during the current phase. Using a random number there is a small chance (a percentage based on the current glyph size) that any given element will be transformed into the phase that represents the current state of nature.  
  
- 
+### Design Process
+
+The simulation I have created have been driven a lot by the code provided during the different parts of the assignment.  In parts two and three I created a farm based simulation which worked really well.
+
+Part four introduced a new level of functionality which provided new inspiration so I decided to switch to a new idea.  I think the narrative of my simulation is working great and I am very pleased with the final result. 
+
+I had the majority of the simulation finished by the commit for result3.  However I didn't think it looked as good as it could so I spent some time improving the design. I also made some code adjustments that greatly improved the motion of the elements and the narrative that is being expressed. 
