@@ -128,7 +128,7 @@ function Agent3() {
 	this.number_steps = this.number_steps - 1;
 	if(this.number_steps < 0) {
 		this.number_steps = 30;
-		this.current_direction = calculateDirection(this._x, this._y, radius);
+		this.current_direction = this.calculateDirection(radius);
 	}
 	v = this.current_direction.copy();
 	//add a little bit of randomness to the movement
@@ -219,6 +219,42 @@ function Agent3() {
 	}
 	
 	/*
+	 * function to calculate which direction an agent should travel
+	 * the agents are always trying to travel anti-clockwise around the sun
+	 * inspired by the movement functionality implemented here: http://bl.ocks.org/HenryLeungVuw/4af688077859644d566f6a9cb2dccad3/5e68663fd84288a41a2301a15410e76cc01e1f1c
+	 * @param  {Number} size     	- current size of the agent
+	 * @return {Vector} 	     	- the direction the agent should travel
+	 */
+	this.calculateDirection = function(size){
+		var dirX = 480 - this._x;
+		var dirY = 250 - this._y;
+		var vX = 0;
+		var vY = 0;
+		var movement = size / 4;
+		//bottom right hand corner of the canvas
+		if(dirY >= 0 && dirX >= 0){
+			vX = -movement;
+			vY = movement;
+		}
+		//top left hand corner of the canvas
+		else if(dirY < 0 && dirX < 0){
+			vX = movement;
+			vY = -movement;
+		}
+		//bottom left hand corner of the canvas
+		else if(dirY >= 0 && dirX < 0){
+			vX = -movement;
+			vY = -movement;
+		}
+		//top right hand corner of the canvas
+		else if(dirY < 0 && dirX >= 0){
+			vX = movement;
+			vY = movement;
+		}
+		return createVector(vX, vY);
+	}
+	
+	/*
 	 * This function determines if an element is to close to edges of the solar system 
 	 * @return {Array}    - an array of values that will be substrated from the vector of the agent
 	 */
@@ -281,6 +317,7 @@ function Agent3() {
 /*
  * function to draw a hexagon shape
  * adapted from: https://p5js.org/examples/form-regular-polygon.html
+ * not included in the above object as it is a function that should be available globally
  * @param {Number} x       	- x-coordinate of the hexagon
  * @param {Number} y    	- y-coordinate of the hexagon
  * @param {Number} radius   - radius of the hexagon
@@ -295,42 +332,4 @@ function hexagon(x, y, radius) {
     vertex(sx, sy);
   }
   endShape(CLOSE);
-}
-
-/*
- * function to calculate which direction an agent should travel
- * the agents are always trying to travel anti-clockwise around the sun
- * inspired by the movement functionality implemented here: http://bl.ocks.org/HenryLeungVuw/4af688077859644d566f6a9cb2dccad3/5e68663fd84288a41a2301a15410e76cc01e1f1c
- * @param  {Number} x       	- current x position of the agent
- * @param  {Number} y    		- current y position of the agent
- * @param  {Number} size     	- current size of the agent
- * @return {Vector} 	     	- the direction the agent should travel
- */
-function calculateDirection(x, y, size){
-	var dirX = 480 - x;
-	var dirY = 250 - y;
-	var vX = 0;
-	var vY = 0;
-	var movement = size / 4;
-	//bottom right hand corner of the canvas
-	if(dirY >= 0 && dirX >= 0){
-		vX = -movement;
-		vY = movement;
-	}
-	//top left hand corner of the canvas
-	else if(dirY < 0 && dirX < 0){
-		vX = movement;
-		vY = -movement;
-	}
-	//bottom left hand corner of the canvas
-	else if(dirY >= 0 && dirX < 0){
-		vX = -movement;
-		vY = -movement;
-	}
-	//top right hand corner of the canvas
-	else if(dirY < 0 && dirX >= 0){
-		vX = movement;
-		vY = movement;
-	}
-	return createVector(vX, vY);
 }
