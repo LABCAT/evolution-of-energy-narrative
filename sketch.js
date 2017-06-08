@@ -487,6 +487,7 @@ function clamp(num, min, max) {
 function stepGrid() {
   var glyphSize = parseInt(sizeSelector.value(), 10);
   var radius = glyphSize / 2;
+  //some small adjustments made here to keep the agents completly within the canvas 
   var min_x = radius + 1;
   var min_y = radius + 1;
   var max_x = int(canvasWidth - radius) - 1;

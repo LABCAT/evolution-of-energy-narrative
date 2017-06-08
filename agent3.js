@@ -61,7 +61,7 @@ var generated_by = {
 				
 //if an agent collides with a particular neighbour it will be overcome by it and change to its state				
 var overcome_by = {
-					'earth' : 'wood', //earth is overcome by water
+					'earth' : 'wood', //earth is overcome by wood
 					'metal' : 'fire',  //metal is overcome by fire
 					'water' : 'earth', //water is overcome by earth
 					'wood'  : 'metal', //wood is overcome by metal
@@ -116,12 +116,11 @@ function Agent3() {
   	}
 
   	var become_current_phase = random(0, 100);
-  	//there is a 0.1% chance that an agent will be reborn as the element of the current phase
-  	//this ensure that none of the 5 different agent types will evey become extinct
-  	if(become_current_phase < 0.1){
+  	//there is a 0.75% that an agent will be reborn as the element of the current phase
+  	//this is used to demonstrate that this element is the dominating energy during this phase
+	//it also ensures that none of the 5 different agent types will ever become extinct
+  	if(become_current_phase <= 0.75){
   		this.agent_type = current_phase;
-		//when an agent is reborn it's size is reset to its original size
-		this._size = this.size_adjuster;
   	}
 
 	//calculate the direction to travel every 10 steps
