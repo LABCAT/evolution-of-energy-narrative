@@ -2,6 +2,8 @@
 
 ### Wu Xing - Five Elements/Planets - Evolution of Energy Narrative
 
+![alt text](https://raw.githubusercontent.com/LABCAT/evolution-of-energy-narrative/master/preview.jpg)
+
 This simulation is based on the Wu Xing philosophy also known as the five elements theory.  The narrative shows the evolution of energy (chi) over the course of time.  The different types of energy are more dominating during the different phases of the cosmic cycle.  The five elements are also known as the five planets so I have chosen use the solar system as the scene for the narrative.
  
 When choosing the image to use, I went back to my source of inspiration for problem set two. I have created an image based on the ‘Rising Sun’ flag from Japan. This supports my narrative very well. A sun is created in the center of the canvas and the elements are scattered throughout the rest of the canvas as the rays of the sun.
