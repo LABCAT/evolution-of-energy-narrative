@@ -4,9 +4,11 @@
 
 ![alt text](https://raw.githubusercontent.com/LABCAT/evolution-of-energy-narrative/master/preview.jpg)
 
+Deployed site: https://labcat.github.io/evolution-of-energy-narrative/
+
 This simulation is based on the Wu Xing philosophy also known as the five elements theory.  The narrative shows the evolution of energy (chi) over the course of time.  The different types of energy are more dominating during the different phases of the cosmic cycle.  The five elements are also known as the five planets so I have chosen use the solar system as the scene for the narrative.
  
-When choosing the image to use, I went back to my source of inspiration for problem set two. I have created an image based on the ‘Rising Sun’ flag from Japan. This supports my narrative very well. A sun is created in the center of the canvas and the elements are scattered throughout the rest of the canvas as the rays of the sun.
+When choosing the image to use, I went back to my source of inspiration for problem set two. I have created an image based on the ï¿½Rising Sunï¿½ flag from Japan. This supports my narrative very well. A sun is created in the center of the canvas and the elements are scattered throughout the rest of the canvas as the rays of the sun.
  
 The are six agents within the simulation. Five of agents each represent a different element of the Wu Xing philosophical theory. The other agent represents the Sun and it is located in the center of the canvas/solar system. 
  
@@ -14,7 +16,7 @@ The sun is a static agent. It is not affected by its neighbours and it does not 
  
 The size and speed settings are the key variables that can change the narrative.  The faster an element is moving the quicker the narrative will unfold. The same applies to the speed setting.  The elements actually move faster as their size increases so changing the size setting also affects the speed of the narrative.   
  
-The other variable that has a great effect on the narrative is the percentage value for the random change that an element will change its state during a phase.  I found that if this was set too low it didn’t appear that the element was the dominating energy.  If it was set too high then the element become too dominating. 
+The other variable that has a great effect on the narrative is the percentage value for the random change that an element will change its state during a phase.  I found that if this was set too low it didnï¿½t appear that the element was the dominating energy.  If it was set too high then the element become too dominating. 
  
 ### The Rules
  
