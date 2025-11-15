@@ -11,7 +11,6 @@
   },
   "devDependencies": {
     "gh-pages": "^6.1.1",
-    "vite": "^5.4.0",
-    "vite-plugin-static-copy": "^3.1.1"
+    "vite": "^5.4.0"
   }
 }
